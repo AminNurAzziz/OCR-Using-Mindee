@@ -46,7 +46,7 @@ class indexController {
 
             const results = [];
             fs.createReadStream(req.file.path)
-                .pipe(csv({ headers: ['Namaku', 'Nama', 'Namanya', 'Tes'] }))
+                .pipe(csv({ headers: ['Namaku', 'Nama', 'Namanya'] }))
                 .on('data', (data) => {
                     console.log(data);
                     const { Namaku, Nama, Namanya, Tes } = data;

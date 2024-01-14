@@ -46,21 +46,25 @@ class indexController {
 
             const results = [];
             fs.createReadStream(req.file.path)
-                .pipe(csv({ headers: ['Namaku', 'Nama', 'Namanya', 'Tes'] }))
+                // .pipe(csv({ headers: ['Namaku', 'Nama', 'Namanya'] }))
+                .pipe(csv())
+                .on('headers', (headers) => {
+                    console.log(`CSV headers: ${headers[0]}`);
+                })
                 .on('data', (data) => {
                     console.log(data);
-                    const { Namaku, Nama, Namanya, Tes } = data;
-                    results.push({ Namaku, Nama, Namanya, Tes });
+                    // const { Namaku, Nama, Namanya } = data;
+                    // results.push({ Namaku, Nama, Namanya });
+                    results.push(data);
                 })
                 .on('end', () => {
-
+                    console.log(results[0]);
                     fs.unlinkSync(req.file.path);
                     const result = results.map((item) => {
                         return {
                             Namaku: item.Namaku,
                             Nama: item.Nama,
                             Namanya: item.Namanya,
-                            Tes: item.Tes,
                         };
                     });
                     console.log(result);

@@ -16,7 +16,11 @@ const upload = multer({ storage: storage });
 
 /* GET home page. */
 router.route('/')
-  .get(catchAsync(index.index))
+  .get(catchAsync(index.formUploadImage))
   .post(upload.single('image'), catchAsync(index.uploadImage));
+
+router.route('/csv')
+  .get(catchAsync(index.formUploadCSV))
+  .post(upload.single('csv'), catchAsync(index.uploadCSV));
 
 module.exports = router;

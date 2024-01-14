@@ -3,6 +3,7 @@ const mindee = require("mindee");
 const mindeeClient = new mindee.Client(process.env.MINDEE_API_KEY);
 const fs = require('fs');
 const csv = require('csv-parser');
+const csvParser = require("csv-parser");
 // const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 class indexController {
     static async formUploadImage(req, res, next) {
@@ -46,24 +47,16 @@ class indexController {
 
             const results = [];
             fs.createReadStream(req.file.path)
-                .pipe(csv({ headers: ['Namaku', 'Nama', 'Namanya', 'Tes'] }))
+                .pipe(csvParser({ headers: true }))
                 .on('data', (data) => {
-                    console.log(data);
-                    const { Namaku, Nama, Namanya, Tes } = data;
-                    results.push({ Namaku, Nama, Namanya, Tes });
+                    const { Namaku, Nama, Namanya } = data;
+                    results.push({ Namaku, Nama, Namanya });
                 })
                 .on('end', () => {
-
                     fs.unlinkSync(req.file.path);
-                    const result = results.map((item) => {
-                        return {
-                            Namaku: item.Namaku,
-                            Nama: item.Nama,
-                            Namanya: item.Namanya,
-                            Tes: item.Tes,
-                        };
+                    results.forEach(element => {
+                        console.log(element);
                     });
-                    console.log(result);
                     res.render('csv', { results });
                 });
         } catch (error) {

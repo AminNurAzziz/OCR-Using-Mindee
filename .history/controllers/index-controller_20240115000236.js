@@ -46,21 +46,26 @@ class indexController {
 
             const results = [];
             fs.createReadStream(req.file.path)
-                .pipe(csv({ headers: ['Namaku', 'Nama', 'Namanya', 'Tes'] }))
+                .pipe(csv())
                 .on('data', (data) => {
+                    // Check if Namaku exists in the data before destructuring
                     console.log(data);
-                    const { Namaku, Nama, Namanya, Tes } = data;
-                    results.push({ Namaku, Nama, Namanya, Tes });
+                    if ('Nama' in data) {
+                        const { Namaku, Nama, Namanya } = data;
+                        results.push({ Namaku, Nama, Namanya });
+                    }
+                    else {
+                        console.log('Data tidak sesuai format.');
+                    }
                 })
                 .on('end', () => {
-
+                    console.log(results[0]);
                     fs.unlinkSync(req.file.path);
                     const result = results.map((item) => {
                         return {
                             Namaku: item.Namaku,
                             Nama: item.Nama,
                             Namanya: item.Namanya,
-                            Tes: item.Tes,
                         };
                     });
                     console.log(result);

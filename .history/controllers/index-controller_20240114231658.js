@@ -42,29 +42,17 @@ class indexController {
             if (!req.file) {
                 return res.status(400).send('File CSV tidak ditemukan.');
             }
-            console.log(req.file.path);
 
             const results = [];
             fs.createReadStream(req.file.path)
-                .pipe(csv({ headers: ['Namaku', 'Nama', 'Namanya', 'Tes'] }))
+                .pipe(csv())
                 .on('data', (data) => {
-                    console.log(data);
-                    const { Namaku, Nama, Namanya, Tes } = data;
-                    results.push({ Namaku, Nama, Namanya, Tes });
+                    const { nomor, nama } = data;
+                    results.push({ nomor, nama });
                 })
                 .on('end', () => {
-
                     fs.unlinkSync(req.file.path);
-                    const result = results.map((item) => {
-                        return {
-                            Namaku: item.Namaku,
-                            Nama: item.Nama,
-                            Namanya: item.Namanya,
-                            Tes: item.Tes,
-                        };
-                    });
-                    console.log(result);
-                    res.render('csv', { results });
+                    res.render('upload-success', { results });
                 });
         } catch (error) {
             console.error(error);

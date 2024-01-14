@@ -46,23 +46,18 @@ class indexController {
 
             const results = [];
             fs.createReadStream(req.file.path)
-                .pipe(csv({ headers: ['Namaku', 'Nama', 'Namanya', 'Tes'] }))
+                .pipe(csv({ headers: false })) // Specify headers: false
                 .on('data', (data) => {
-                    console.log(data);
-                    const { Namaku, Nama, Namanya, Tes } = data;
-                    results.push({ Namaku, Nama, Namanya, Tes });
+                    const [Namaku, Nama, Namanya] = data; // Manually destructure columns
+                    results.push({ Namaku, Nama, Namanya });
                 })
                 .on('end', () => {
-
                     fs.unlinkSync(req.file.path);
-                    const result = results.map((item) => {
-                        return {
-                            Namaku: item.Namaku,
-                            Nama: item.Nama,
-                            Namanya: item.Namanya,
-                            Tes: item.Tes,
-                        };
-                    });
+                    const result = results.map((item) => ({
+                        Namaku: item.Namaku,
+                        Nama: item.Nama,
+                        Namanya: item.Namanya,
+                    }));
                     console.log(result);
                     res.render('csv', { results });
                 });
@@ -71,6 +66,7 @@ class indexController {
             res.status(500).send('Internal Server Error');
         }
     }
+
 }
 
 module.exports = indexController;

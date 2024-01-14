@@ -46,24 +46,14 @@ class indexController {
 
             const results = [];
             fs.createReadStream(req.file.path)
-                .pipe(csv({ headers: ['Namaku', 'Nama', 'Namanya', 'Tes'] }))
+                .pipe(csv())
                 .on('data', (data) => {
-                    console.log(data);
-                    const { Namaku, Nama, Namanya, Tes } = data;
-                    results.push({ Namaku, Nama, Namanya, Tes });
+                    const { Nomor, Nama } = data;
+                    results.push({ Nomor, Nama });
                 })
                 .on('end', () => {
-
                     fs.unlinkSync(req.file.path);
-                    const result = results.map((item) => {
-                        return {
-                            Namaku: item.Namaku,
-                            Nama: item.Nama,
-                            Namanya: item.Namanya,
-                            Tes: item.Tes,
-                        };
-                    });
-                    console.log(result);
+                    console.log('CSV file successfully processed' + results);
                     res.render('csv', { results });
                 });
         } catch (error) {

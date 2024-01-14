@@ -45,25 +45,25 @@ class indexController {
             console.log(req.file.path);
 
             const results = [];
+            let isFirstRow = true;
+
             fs.createReadStream(req.file.path)
-                .pipe(csv({ headers: ['Namaku', 'Nama', 'Namanya', 'Tes'] }))
+                .pipe(csv())
                 .on('data', (data) => {
-                    console.log(data);
-                    const { Namaku, Nama, Namanya, Tes } = data;
-                    results.push({ Namaku, Nama, Namanya, Tes });
+                    if (isFirstRow) {
+                        // Skip the first row (header)
+                        isFirstRow = false;
+                        return;
+                    }
+
+                    const { Namaku, Nama, Namanya } = data;
+                    results.push({ Namaku, Nama, Namanya });
                 })
                 .on('end', () => {
-
                     fs.unlinkSync(req.file.path);
-                    const result = results.map((item) => {
-                        return {
-                            Namaku: item.Namaku,
-                            Nama: item.Nama,
-                            Namanya: item.Namanya,
-                            Tes: item.Tes,
-                        };
+                    results.forEach(element => {
+                        console.log(element);
                     });
-                    console.log(result);
                     res.render('csv', { results });
                 });
         } catch (error) {
@@ -71,6 +71,7 @@ class indexController {
             res.status(500).send('Internal Server Error');
         }
     }
+
 }
 
 module.exports = indexController;

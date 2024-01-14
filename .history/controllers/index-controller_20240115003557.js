@@ -60,7 +60,6 @@ class indexController {
                             Namaku: item.Namaku,
                             Nama: item.Nama,
                             Namanya: item.Namanya,
-                            Tes: item.Tes,
                         };
                     });
                     console.log(result);
