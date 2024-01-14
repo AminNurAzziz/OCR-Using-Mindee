@@ -8,7 +8,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // Connect to MongoDB
-connectToDatabase();
+// connectToDatabase();
 
 // Setup Middleware
 setupMiddleware(app);
